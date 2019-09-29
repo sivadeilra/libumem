@@ -18,6 +18,7 @@ struct pthread_attr_t {
 
 inline void pthread_attr_init(pthread_attr_t*) {}
 inline void pthread_attr_setdetachstate(pthread_attr_t*, int s) {}
+inline void pthread_attr_destroy(pthread_attr_t*) {}
 
 #define PTHREAD_CREATE_DETACHED 0
 

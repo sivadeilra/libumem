@@ -47,10 +47,6 @@
 #include <synch.h>
 #endif
 
-#ifdef	__cplusplus
-extern "C" {
-#endif
-
 typedef struct vmem_seg vmem_seg_t;
 
 #define	VMEM_STACK_DEPTH	20
@@ -84,17 +80,9 @@ typedef struct vmem_freelist {
 	vmem_seg_t	*vs_kprev;	/* prev of kin */
 } vmem_freelist_t;
 
-#define	VS_SIZE(vsp)	((vsp)->vs_end - (vsp)->vs_start)
-
-/*
- * Segment hashing
- */
-#define	VMEM_HASH_INDEX(a, s, q, m)					\
-	((((a) + ((a) >> (s)) + ((a) >> ((s) << 1))) >> (q)) & (m))
-
-#define	VMEM_HASH(vmp, addr)						\
-	(&(vmp)->vm_hash_table[VMEM_HASH_INDEX(addr,			\
-	(vmp)->vm_hash_shift, (vmp)->vm_qshift, (vmp)->vm_hash_mask)])
+inline size_t VS_SIZE(const vmem_seg_t* vsp) {
+    return vsp->vs_end - vsp->vs_start;
+}
 
 #define	VMEM_NAMELEN		30
 #define	VMEM_HASH_INITIAL	16
@@ -117,6 +105,8 @@ typedef struct vmem_kstat {
 	uint64_t	vk_contains;		/* vmem_contains() calls */
 	uint64_t	vk_contains_search;	/* vmem_contains() search cnt */
 } vmem_kstat_t;
+
+typedef struct umem_cache umem_cache_t;
 
 struct vmem {
 	char		vm_name[VMEM_NAMELEN];	/* arena name */
@@ -141,7 +131,7 @@ struct vmem {
 	vmem_seg_t	vm_seg0;	/* anchor segment */
 	vmem_seg_t	vm_rotor;	/* rotor for VM_NEXTFIT allocations */
 	vmem_seg_t	*vm_hash0[VMEM_HASH_INITIAL];	/* initial hash table */
-	void		*vm_qcache[VMEM_NQCACHE_MAX];	/* quantum caches */
+	umem_cache_t* vm_qcache[VMEM_NQCACHE_MAX];	/* quantum caches */
 	vmem_freelist_t	vm_freelist[VMEM_FREELISTS + 1]; /* power-of-2 flists */
 	vmem_kstat_t	vm_kstat;	/* kstat data */
 };
@@ -157,8 +147,16 @@ typedef struct vmem_populate_lock {
 
 #define	VM_UMFLAGS	VM_KMFLAGS
 
-#ifdef	__cplusplus
+/*
+ * Segment hashing
+ */
+inline size_t VMEM_HASH_INDEX(size_t a, size_t s, size_t q, size_t m) {
+    return ((a + (a >> s) + (a >> (s << 1))) >> q) & m;
 }
-#endif
+
+inline vmem_seg_t** VMEM_HASH(vmem_t* vmp, Vaddr addr) {
+    return (&vmp->vm_hash_table[VMEM_HASH_INDEX(addr,
+        vmp->vm_hash_shift, vmp->vm_qshift, vmp->vm_hash_mask)]);
+}
 
 #endif	/* _SYS_VMEM_IMPL_USER_H */

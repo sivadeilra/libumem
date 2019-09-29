@@ -31,11 +31,6 @@
 
 #include <sys/types.h>
 
-#ifdef	__cplusplus
-extern "C" {
-#endif
-
-
 /*
  * Per-allocation flags
  */
@@ -102,6 +97,8 @@ extern "C" {
  */
 #define	VMEM_REENTRANT	0x80000000
 
+    typedef size_t Vaddr;
+
 typedef struct vmem vmem_t;
 typedef void *(vmem_alloc_t)(vmem_t *, size_t, int);
 typedef void (vmem_free_t)(vmem_t *, void *, size_t);
@@ -120,7 +117,7 @@ extern int vmem_is_populator();
 extern size_t vmem_seg_size;
 #endif
 
-extern vmem_t *vmem_create(const char *, void *, size_t, size_t,
+extern vmem_t *vmem_create(const char *, Vaddr, size_t, size_t,
     vmem_alloc_t *, vmem_free_t *, vmem_t *, size_t, int);
 extern vmem_t *vmem_xcreate(const char *, void *, size_t, size_t,
     vmem_ximport_t *, vmem_free_t *, vmem_t *, size_t, int);
@@ -130,13 +127,9 @@ extern void *vmem_xalloc(vmem_t *, size_t, size_t, size_t, size_t,
     void *, void *, int);
 extern void vmem_free(vmem_t *, void *, size_t);
 extern void vmem_xfree(vmem_t *, void *, size_t);
-extern void *vmem_add(vmem_t *, void *, size_t, int);
-extern int vmem_contains(vmem_t *, void *, size_t);
+extern Vaddr vmem_add(vmem_t *, Vaddr, size_t, int);
+extern int vmem_contains(vmem_t *, Vaddr, size_t);
 extern void vmem_walk(vmem_t *, int, void (*)(void *, void *, size_t), void *);
 extern size_t vmem_size(vmem_t *, int);
-
-#ifdef	__cplusplus
-}
-#endif
 
 #endif	/* _SYS_VMEM_H */

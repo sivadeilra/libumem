@@ -113,7 +113,7 @@ static INLINE int thr_create(void *stack_base,
 #else
 # ifdef _WIN32
 #  define umem_atomic_inc(a)		InterlockedIncrement(a)
-#  define umem_atomic_inc64(a)    InterlockedIncrement64(a)
+#  define umem_atomic_inc64(a)    InterlockedIncrement64((LONGLONG*)a)
 # elif defined(__MACH__)
 #  include <libkern/OSAtomic.h>
 #  define umem_atomic_inc(x) OSAtomicIncrement32Barrier((int32_t*)x)
