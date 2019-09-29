@@ -51,56 +51,50 @@
 #include <machine/param.h>
 #endif
 
-void
-vmem_heap_init(void)
-{
+void vmem_heap_init(void) {
 #ifdef _WIN32
-	vmem_backend = VMEM_BACKEND_MMAP;
-	(void) vmem_sbrk_arena(NULL, NULL);
+  vmem_backend = VMEM_BACKEND_MMAP;
+  (void)vmem_sbrk_arena(NULL, NULL);
 #else
-# if defined(sun)
-	void *handle = dlopen("libmapmalloc.so.1", RTLD_NOLOAD);
+#if defined(sun)
+  void *handle = dlopen("libmapmalloc.so.1", RTLD_NOLOAD);
 
-	if (handle != NULL) {
-		log_message("sbrk backend disabled\n");
-		vmem_backend = VMEM_BACKEND_MMAP;
-	}
-# else
-	if (vmem_backend == 0) {
-		/* prefer mmap, as sbrk() seems to have problems wither working
-		 * with other allocators or has some Solaris specific assumptions. */
-		vmem_backend = VMEM_BACKEND_MMAP;
-	}
-# endif
+  if (handle != NULL) {
+    log_message("sbrk backend disabled\n");
+    vmem_backend = VMEM_BACKEND_MMAP;
+  }
+#else
+  if (vmem_backend == 0) {
+    /* prefer mmap, as sbrk() seems to have problems wither working
+     * with other allocators or has some Solaris specific assumptions. */
+    vmem_backend = VMEM_BACKEND_MMAP;
+  }
+#endif
 
-	if ((vmem_backend & VMEM_BACKEND_MMAP) != 0) {
-		vmem_backend = VMEM_BACKEND_MMAP;
-		(void) vmem_mmap_arena(NULL, NULL);
-	} else {
-		vmem_backend = VMEM_BACKEND_SBRK;
-		(void) vmem_sbrk_arena(NULL, NULL);
-	}
+  if ((vmem_backend & VMEM_BACKEND_MMAP) != 0) {
+    vmem_backend = VMEM_BACKEND_MMAP;
+    (void)vmem_mmap_arena(NULL, NULL);
+  } else {
+    vmem_backend = VMEM_BACKEND_SBRK;
+    (void)vmem_sbrk_arena(NULL, NULL);
+  }
 #endif
 }
 
 /*ARGSUSED*/
-void
-umem_type_init(caddr_t start, size_t len, size_t pgsize)
-{
+void umem_type_init(caddr_t start, size_t len, size_t pgsize) {
 #ifdef _WIN32
-	SYSTEM_INFO info;
-	GetSystemInfo(&info);
-	pagesize = info.dwPageSize;
+  SYSTEM_INFO info;
+  GetSystemInfo(&info);
+  pagesize = info.dwPageSize;
 #elif !defined(__FreeBSD__)
-	pagesize = _sysconf(_SC_PAGESIZE);
+  pagesize = _sysconf(_SC_PAGESIZE);
 #else
-	pagesize = PAGE_SIZE;
+  pagesize = PAGE_SIZE;
 #endif
 }
 
-int
-umem_get_max_ncpus(void)
-{
+int umem_get_max_ncpus(void) {
 #ifdef linux
   /*
    * HACK: sysconf() will invoke malloc() on Linux as part of reading

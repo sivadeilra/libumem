@@ -25,7 +25,7 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)stub_stand.c	1.3	05/06/08 SMI"
+//#pragma ident	"@(#)stub_stand.c	1.3	05/06/08 SMI"
 
 /*
  * Stubs for the standalone to reduce the dependence on external libraries
@@ -33,94 +33,50 @@
 
 #include "config.h"
 #include <string.h>
-#include <thread.h>
+//#include <thread.h>
 
 #include "misc.h"
 
 /*ARGSUSED*/
-int
-_cond_init(cond_t *cvp, int type, void *arg)
-{
-	return (0);
+int _cond_init(cond_t *cvp, int type, void *arg) { return (0); }
+
+/*ARGSUSED*/
+int _cond_destroy(cond_t *cvp) { return (0); }
+
+/*ARGSUSED*/
+int _cond_wait(cond_t *cv, mutex_t *mutex) {
+  umem_panic("attempt to wait on standumem cv %p", cv);
+
+  /*NOTREACHED*/
+  return (0);
 }
 
 /*ARGSUSED*/
-int
-_cond_destroy(cond_t *cvp)
-{
-	return (0);
-}
+int _cond_broadcast(cond_t *cvp) { return (0); }
 
-/*ARGSUSED*/
-int
-_cond_wait(cond_t *cv, mutex_t *mutex)
-{
-	umem_panic("attempt to wait on standumem cv %p", cv);
-
-	/*NOTREACHED*/
-	return (0);
-}
-
-/*ARGSUSED*/
-int
-_cond_broadcast(cond_t *cvp)
-{
-	return (0);
-}
-
-thread_t
-_thr_self(void)
-{
-	return ((thread_t)1);
-}
+thread_t _thr_self(void) { return ((thread_t)1); }
 
 static mutex_t _mp = DEFAULTMUTEX;
 
 /*ARGSUSED*/
-int
-__mutex_init(mutex_t *mp, int type, void *arg)
-{
-	(void) memcpy(mp, &_mp, sizeof (mutex_t));
-	return (0);
+int __mutex_init(mutex_t *mp, int type, void *arg) {
+  (void)memcpy(mp, &_mp, sizeof(mutex_t));
+  return (0);
 }
 
 /*ARGSUSED*/
-int
-__mutex_destroy(mutex_t *mp)
-{
-	return (0);
-}
+int __mutex_destroy(mutex_t *mp) { return (0); }
 
 /*ARGSUSED*/
-int
-__mutex_held(mutex_t *mp)
-{
-	return (1);
-}
+int __mutex_held(mutex_t *mp) { return (1); }
 
 /*ARGSUSED*/
-int
-__mutex_lock(mutex_t *mp)
-{
-	return (0);
-}
+int __mutex_lock(mutex_t *mp) { return (0); }
 
 /*ARGSUSED*/
-int
-__mutex_trylock(mutex_t *mp)
-{
-	return (0);
-}
+int __mutex_trylock(mutex_t *mp) { return (0); }
 
 /*ARGSUSED*/
-int
-__mutex_unlock(mutex_t *mp)
-{
-	return (0);
-}
+int __mutex_unlock(mutex_t *mp) { return (0); }
 
-int
-issetugid(void)
-{
-	return (1);
-}
+int issetugid(void) { return (1); }

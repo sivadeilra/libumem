@@ -20,46 +20,29 @@
  * CDDL HEADER END
  */
 /*
- * Copyright 2004 Sun Microsystems, Inc.  All rights reserved.
+ * Copyright 2002 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
+ *
+ * Portions Copyright 2006-2008 Message Systems, Inc. All rights reserved.
  */
 
-#pragma ident	"@(#)init_stand.c	1.3	05/06/08 SMI"
-
-/*
- * Initialization routines for the standalone version of libumem.
- */
+/* #pragma ident	"@(#)umem_agent_support.c	1.2	05/06/08 SMI" */
 
 #include "config.h"
 #include "umem_base.h"
-#include "vmem_base.h"
 
-#include "vmem_stand.h"
+#define AGENT_STACK_SIZE 4096
 
-void
-vmem_heap_init(void)
-{
-	vmem_backend = VMEM_BACKEND_STAND;
-	(void) vmem_stand_arena(NULL, NULL);
-}
+#if 0
+char __umem_agent_stack_beg[AGENT_STACK_SIZE];
+char *__umem_agent_stack_end = __umem_agent_stack_beg + AGENT_STACK_SIZE;
 
 void
-umem_type_init(caddr_t base, size_t len, size_t pgsize)
+__umem_agent_free_bp(umem_cache_t *cp, void *buf)
 {
-	pagesize = pgsize;
+	extern void _breakpoint(void);			/* inline asm */
 
-	vmem_stand_init();
-	(void) vmem_stand_add(base, len);
+	_umem_cache_free(cp, buf);
+	_breakpoint();
 }
-
-int
-umem_get_max_ncpus(void)
-{
-	return (1);
-}
-
-int
-umem_add(caddr_t base, size_t len)
-{
-	return (vmem_stand_add(base, len));
-}
+#endif

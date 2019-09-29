@@ -29,33 +29,35 @@
 /* #pragma ident	"@(#)vmem_base.c	1.6	05/06/08 SMI" */
 
 /* #include "mtlib.h" */
-#include "config.h"
 #include "vmem_base.h"
+#include "config.h"
 #include "umem_base.h"
 
 uint_t vmem_backend = 0;
 uint_t vmem_allocator = VM_BESTFIT;
 
-vmem_t *
-vmem_heap_arena(vmem_alloc_t **allocp, vmem_free_t **freep)
-{
-	static mutex_t arena_mutex = DEFAULTMUTEX;
+vmem_t *vmem_heap_arena(vmem_alloc_t **allocp, vmem_free_t **freep) {
+  static mutex_t arena_mutex = DEFAULTMUTEX;
 
-	/*
-	 * Allow the init thread through, block others until the init completes
-	 */
-	if (umem_ready != UMEM_READY && umem_init_thr != thr_self() &&
-	    umem_init() == 0)
-		return (NULL);
+  /*
+   * Allow the init thread through, block others until the init completes
+   */
+  if (umem_ready != UMEM_READY && umem_init_thr != thr_self() &&
+      umem_init() == 0) {
+    return (NULL);
+  }
 
-	(void) mutex_lock(&arena_mutex);
-	if (vmem_heap == NULL)
-		vmem_heap_init();
-	(void) mutex_unlock(&arena_mutex);
+  (void)mutex_lock(&arena_mutex);
+  if (vmem_heap == NULL) {
+    vmem_heap_init();
+  }
+  (void)mutex_unlock(&arena_mutex);
 
-	if (allocp != NULL)
-		*allocp = vmem_heap_alloc;
-	if (freep != NULL)
-		*freep = vmem_heap_free;
-	return (vmem_heap);
+  if (allocp != NULL) {
+    *allocp = vmem_heap_alloc;
+  }
+  if (freep != NULL) {
+    *freep = vmem_heap_free;
+  }
+  return (vmem_heap);
 }

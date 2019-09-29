@@ -4,10 +4,9 @@
 
 #include "umem.h"
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
   char *foo;
-  
+
   umem_startup(NULL, 0, 0, NULL, NULL);
 
   foo = umem_alloc(32, UMEM_DEFAULT);
@@ -20,4 +19,3 @@ int main(int argc, char *argv[])
 
   return EXIT_SUCCESS;
 }
-

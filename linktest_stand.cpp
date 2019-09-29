@@ -25,7 +25,7 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)linktest_stand.c	1.3	05/06/08 SMI"
+#pragma ident "@(#)linktest_stand.c	1.3	05/06/08 SMI"
 
 /*
  * This file is used to verify that the standalone's external dependencies
@@ -55,17 +55,17 @@ void umem_err_recoverable(void) {}
 void umem_panic(void) {}
 void vsnprintf(void) {}
 
-#ifdef	__i386
+#ifdef __i386
 void __mul64(void) {}
 void __rem64(void) {}
 void __div64(void) {}
 
-#ifdef	__GNUC__
+#ifdef __GNUC__
 void __divdi3(void) {}
 void __moddi3(void) {}
-#endif	/* __GNUC__ */
+#endif /* __GNUC__ */
 
-#endif	/* __i386 */
+#endif /* __i386 */
 
 int __ctype;
 int errno;

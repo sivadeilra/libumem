@@ -7,8 +7,7 @@
 #include <malloc.h>
 #endif
 
-static void minfo(void)
-{
+static void minfo(void) {
 #if defined(HAVE_MALLOC_H) && defined(HAVE_MALLINFO)
   struct mallinfo mi;
   mi = mallinfo();
@@ -18,9 +17,7 @@ static void minfo(void)
 #endif
 }
 
-int
-main (void)
-{
+int main(void) {
   char *p;
 
   minfo();
